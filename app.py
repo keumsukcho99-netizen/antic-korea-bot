@@ -28,9 +28,9 @@ if prompt := st.chat_input("질문을 입력하세요..."):
 
     try:
         # AI 모델 불러오기 (Gemini Pro)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini pro')        
+
         response = model.generate_content(prompt)
-        
         # AI 응답 표시
         with st.chat_message("assistant"):
             st.markdown(response.text)
