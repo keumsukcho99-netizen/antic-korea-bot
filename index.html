@@ -1,3 +1,45 @@
-index.html
-check_circle
-App.tsx
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antique Korea - 시간의 적체미</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,700;1,300;1,700&family=Noto+Serif+KR:wght@200..900&family=Pretendard:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-paper: #F9F6F0;
+            --color-ink: #1A1A1A;
+        }
+        body { 
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--color-paper);
+            color: var(--color-ink);
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .serif-kr { font-family: 'Noto Serif KR', serif; }
+        .loading-screen {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #F9F6F0;
+        }
+    </style>
+
+</script>
+</head>
+<body>
+    <div id="root">
+        <div class="loading-screen">
+            <h2 class="serif-kr" style="font-size: 1.5rem; font-weight: 800;">연구소 문을 여는 중...</h2>
+            <p class="serif-kr" style="margin-top: 1rem; color: #666;">잠시만 기다려 주십시오.</p>
+        </div>
+    </div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
