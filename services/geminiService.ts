@@ -1,73 +1,58 @@
-import { GoogleGenAI, Type } from "@google/genai";
-import { AppraisalResult, AppraisalConfig } from "../types";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { AppraisalResult } from "../types";
 
-export async function analyzeArtifact(imageBases: string[], config: AppraisalConfig): Promise<AppraisalResult> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  const model = 'gemini-3-pro-preview';
+// Vite에서는 import.meta.env로 환경변수를 가져옵니다
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
 
-  const systemInstruction = `당신은 고미술 전문 감정관입니다. 이미지를 분석하여 역사적 가치, 낙관, 재질 등을 정밀하게 고증하십시오. JSON 형식으로만 응답하십시오.`;
+const genAI = new GoogleGenerativeAI(API_KEY);
 
-  const imageParts = imageBases.map(base64 => ({
-    inlineData: { mimeType: "image/jpeg", data: base64.split(',')[1] }
-  }));
-
-  const response = await ai.models.generateContent({
-    model,
-    contents: {
-      parts: [
-        { text: `이 유물을 분석하십시오. 카테고리: ${config.category}. 작가와 시대를 일관되게 고증하십시오.` },
-        ...imageParts
-      ]
-    },
-    config: {
-      systemInstruction,
-      tools: [{ googleSearch: {} }],
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          title: { type: Type.STRING },
-          category: { type: Type.STRING },
-          period: { type: Type.STRING },
-          description: { type: Type.STRING },
-          confidenceScore: { type: Type.NUMBER },
-          coreAnalysis: {
-            type: Type.OBJECT,
-            properties: {
-              sealsAndSignatures: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } } },
-              historicalValue: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } } },
-              academicVerification: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } } },
-              materialAndStorage: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } } }
-            }
-          },
-          analysis: {
-            type: Type.OBJECT,
-            properties: {
-              artifactDetails: { type: Type.STRING },
-              historicalSignificance: { type: Type.STRING },
-              conditionReport: { type: Type.STRING }
-            }
-          },
-          estimatedValue: {
-            type: Type.OBJECT,
-            properties: {
-              min: { type: Type.NUMBER },
-              max: { type: Type.NUMBER },
-              currency: { type: Type.STRING },
-              note: { type: Type.STRING }
-            }
-          }
-        }
+export const geminiService = {
+  async analyzeImage(
+    imageBase64: string,
+    mimeType: string
+  ): Promise<AppraisalResult> {
+    try {
+      if (!API_KEY) {
+        throw new Error("API Key가 설정되지 않았습니다.");
       }
-    }
-  });
 
-  const resultData = JSON.parse(response.text || '{}');
-  return {
-    id: crypto.randomUUID(),
-    timestamp: Date.now(),
-    imageUrls: imageBases,
-    ...resultData,
-    isDonated: config.allowDigitalMuseum
-  };
-}
+      // 최신 모델인 gemini-1.5-flash 사용 (속도가 빠름)
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      const prompt = `
+        당신은 40년 경력의 한국 고미술 감정 전문가입니다.
+        이 유물의 사진을 보고 다음 정보를 JSON 형식으로 분석해 주세요.
+        반드시 다음 형식을 엄격히 지켜야 합니다:
+        {
+          "name": "유물 추정 명칭",
+          "era": "추정 시대 (예: 고려시대 12세기)",
+          "estimatedValue": "추정 가치 (원화 및 달러)",
+          "description": "유물의 특징, 문양, 기법에 대한 3줄 이상의 상세한 설명",
+          "confidence": 80 (확신하는 정도를 0~100 사이 숫자로)
+        }
+        설명은 한국어로 품격 있고 전문적인 어조로 작성해 주세요.
+      `;
+
+      const result = await model.generateContent([
+        prompt,
+        {
+          inlineData: {
+            data: imageBase64,
+            mimeType: mimeType,
+          },
+        },
+      ]);
+
+      const response = await result.response;
+      const text = response.text();
+
+      // JSON 부분만 추출 (혹시 모를 마크다운 제거)
+      const cleanText = text.replace(/```json|```/g, "").trim();
+      
+      return JSON.parse(cleanText) as AppraisalResult;
+    } catch (error) {
+      console.error("AI 분석 중 오류 발생:", error);
+      throw new Error("분석에 실패했습니다. 다시 시도해 주세요.");
+    }
+  },
+};
