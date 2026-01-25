@@ -1,52 +1,71 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antique-Korea.com | 고미술 정밀 고증</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script>
-      // 환경 변수 안전 장치
-      if (typeof window.process === 'undefined') {
-        window.process = { env: { API_KEY: "" } };
-      }
-    </script>
-    <style>
-        :root { --royal-gold: #b8860b; --museum-black: #0a0a0a; }
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--museum-black); color: #e5e5e5; margin: 0; overflow-x: hidden; }
-        .font-serif-kr { font-family: 'Noto Serif KR', serif; }
-        .text-gold-gradient {
-            background: linear-gradient(90deg, #8b4513, #b8860b, #d4af37, #b8860b, #8b4513);
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            animation: gold-shimmer 4s linear infinite;
-        }
-        @keyframes gold-shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
-        .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-    <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@19.0.0",
-    "react-dom": "https://esm.sh/react-dom@19.0.0",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.460.0?external=react",
-    "@google/genai": "https://esm.sh/@google/genai@0.21.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
-  }
-}
-</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Antique Korea - 시간의 적체</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+
+  <style>
+    body{
+      background:#f6f4fa; color:#222;
+      font-family:'Noto Sans KR',sans-serif;
+      margin:0;
+    }
+    .container{
+      max-width:720px;
+      margin:0 auto;
+      padding:64px 20px;
+    }
+    h1{ font-size:32px; margin:0 0 22px; line-height:1.25; }
+    p{ font-size:18px; line-height:1.75; margin:0 0 18px; }
+    .highlight{ color:#2f5d50; font-weight:700; }
+    .card{
+      background:#fff;
+      border-radius:14px;
+      padding:22px;
+      box-shadow:0 8px 20px rgba(0,0,0,.08);
+      margin-top:26px;
+    }
+    .btn{
+      display:inline-block;
+      margin-top:14px;
+      background:#2f5d50; color:#fff;
+      text-decoration:none;
+      padding:12px 18px;
+      border-radius:10px;
+    }
+    .btn:hover{ background:#3a7264; }
+    .small{ font-size:14px; color:#666; margin-top:18px; }
+  </style>
 </head>
+
 <body>
-    <div id="root"></div>
-    <!-- 
-      주의: 여기에 <script src="index.tsx"></script> 를 넣지 마세요. 
-      시스템이 자동으로 index.tsx를 변환하여 로드합니다.
-    -->
+  <div class="container">
+    <h1>시간은 사라지지 않습니다.<br>다만, 물건 속에 머물러 있을 뿐입니다.</h1>
+
+    <p>
+      <span class="highlight">Antique Korea</span>는
+      값과 소유가 아니라, 시간이 축적된 흔적으로서의 고미술과 서화를 바라보는 공간입니다.
+    </p>
+    <p>
+      서두르지 않고, 오래된 것들의 결을 따라가며
+      그 물건이 지나온 손과 침묵을 기록합니다.
+    </p>
+
+    <div class="card">
+      <p><b>지금 이 페이지는 ‘문’입니다.</b><br>
+      방(기능)은 살아가며 천천히 늘려갑니다.</p>
+
+      <a class="btn" href="https://blog.naver.com/keumsukcho" target="_blank" rel="noopener">
+        블로그로 가기
+      </a>
+
+      <p class="small">
+        © Antique Korea — Quiet Trust
+      </p>
+    </div>
+  </div>
 </body>
 </html>
-
