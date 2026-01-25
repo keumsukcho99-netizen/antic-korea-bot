@@ -78,6 +78,292 @@
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
     "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
+    import React, { useState, useEffect } from 'react';
+import Layout from './components/Layout';
+import ArtifactUploader from './components/ArtifactUploader';
+import ResultDisplay from './components/ResultDisplay';
+import DisclaimerModal from './components/DisclaimerModal';
+import { AppraisalResult, ViewState, AppraisalConfig } from './types';
+import { analyzeArtifact } from './services/geminiService';
+import { 
+  Landmark, Sparkles, Heart, Coffee, Library, Box, 
+  Download, CloudSync, Globe, ExternalLink, Moon, ArrowRight, Quote 
+} from 'lucide-react';
+
+const DAILY_LIMIT = 3;
+
+const App: React.FC = () => {
+  const [activeView, setActiveView] = useState<ViewState>('home');
+  const [results, setResults] = useState<AppraisalResult[]>([]);
+  const [currentResult, setCurrentResult] = useState<AppraisalResult | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasAgreed, setHasAgreed] = useState<boolean>(false);
+  const [dailyCount, setDailyCount] = useState<number>(0);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('appraisal_history');
+    if (saved) setResults(JSON.parse(saved));
+    if (localStorage.getItem('user_has_agreed_disclaimer') === 'true') setHasAgreed(true);
+    const today = new Date().toISOString().split('T')[0];
+    if (localStorage.getItem('last_appraisal_date') !== today) {
+      localStorage.setItem('last_appraisal_date', today);
+      localStorage.setItem('daily_appraisal_count', '0');
+    } else {
+      setDailyCount(parseInt(localStorage.getItem('daily_appraisal_count') || '0'));
+    }
+  }, []);
+
+  const handleAnalyze = async (images: string[], config: AppraisalConfig) => {
+    if (dailyCount >= DAILY_LIMIT) {
+      alert(`일일 감정 한도(${DAILY_LIMIT}회)를 초과하였습니다. 내일 다시 이용해 주세요.`);
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const result = await analyzeArtifact(images, config);
+      setCurrentResult(result);
+      const newCount = dailyCount + 1;
+      setDailyCount(newCount);
+      localStorage.setItem('daily_appraisal_count', newCount.toString());
+      const updated = [result, ...results];
+      setResults(updated);
+      localStorage.setItem('appraisal_history', JSON.stringify(updated));
+      setActiveView('result');
+    } catch (error) {
+      console.error(error);
+      alert("고증 분석 중 오류가 발생했습니다. 다시 시도해 주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const downloadArchive = () => {
+    if (results.length === 0) {
+      alert("아직 옮길 이삿짐(고증 데이터)이 없습니다.");
+      return;
+    }
+    const dataStr = JSON.stringify(results, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'antique-korea-archive-package.json';
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const renderHome = () => (
+    <div className="space-y-24 py-10 px-6">
+      {/* 1. Welcoming & Migration Message */}
+      <section className="max-w-4xl mx-auto space-y-12 pt-16 text-center md:text-left">
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1 bg-emerald-500/10 rounded-full text-emerald-500 text-[10px] font-black tracking-widest uppercase border border-emerald-500/20">
+            <CloudSync size={12} className="animate-spin-slow" /> Domain Migration in Progress
+          </div>
+          <h2 className="text-5xl md:text-7xl font-serif-kr font-black text-white leading-[1.15] tracking-tight">
+            공간을 정리하고 <br />
+            <span className="text-gold-gradient">시간을 정돈하고 있습니다.</span>
+          </h2>
+          <div className="h-1.5 w-24 bg-[#b8860b] mx-auto md:mx-0" />
+        </div>
+        
+        <p className="text-gray-400 font-serif-kr text-xl md:text-2xl leading-relaxed italic opacity-90 max-w-3xl">
+          <span className="text-white font-bold not-italic">www.antique-korea.com</span>의 대문을 활짝 열기 위해 <br className="hidden md:block" />
+          현재 내부 방 정리와 데이터 이주 작업이 한창입니다. 
+        </p>
+      </section>
+
+      {/* 2. Main Resting Lounge (Naver Blog) */}
+      <section className="max-w-5xl mx-auto relative group">
+        <div className="absolute -inset-1 bg-gradient-to-r from-[#b8860b] to-[#2d5a4c] rounded-[68px] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+        <a 
+          href="https://blog.naver.com/keumsukcho" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="relative block bg-black border-2 border-[#b8860b]/30 p-12 md:p-20 rounded-[64px] overflow-hidden transition-all hover:border-[#b8860b] shadow-3xl"
+        >
+          <div className="absolute top-0 right-0 p-16 opacity-5 group-hover:opacity-10 transition-opacity">
+            <Coffee size={240} />
+          </div>
+          
+          <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+            <div className="space-y-6 text-center md:text-left">
+              <div className="inline-flex items-center gap-3 px-5 py-2 bg-[#b8860b]/10 rounded-full text-[#b8860b] text-xs font-black tracking-widest uppercase border border-[#b8860b]/20">
+                <Moon size={14} /> Temporary Resting Place
+              </div>
+              <h3 className="text-4xl md:text-6xl font-serif-kr font-black text-white leading-tight">
+                "정리가 끝날 때까지 <br /> 
+                <span className="text-[#b8860b]">수집가의 사랑방</span>에서."
+              </h3>
+              <div className="space-y-2">
+                <p className="text-gray-400 font-serif-kr text-xl italic">
+                  이삿짐을 다 푸는 동안, 따뜻한 차 한 잔과 고미술 이야기가 있는 <br className="hidden md:block" />
+                  네이버 블로그 쉼터에서 잠시 여유를 즐겨보세요.
+                </p>
+                <p className="text-[#2d5a4c] font-black text-sm uppercase tracking-tighter">blog.naver.com/keumsukcho</p>
+              </div>
+            </div>
+            
+            <div className="shrink-0 flex flex-col items-center gap-4">
+              <div className="w-32 h-32 bg-[#b8860b] rounded-full flex items-center justify-center text-black shadow-2xl group-hover:scale-110 transition-transform">
+                <Coffee size={48} />
+              </div>
+              <span className="bg-white text-black px-10 py-5 rounded-2xl font-black font-serif-kr text-xl flex items-center gap-3 group-hover:bg-[#b8860b] transition-colors">
+                사랑방 입장 <ExternalLink size={24} />
+              </span>
+            </div>
+          </div>
+        </a>
+      </section>
+
+      {/* 3. Real-time Appraisal Service Branding */}
+      <section className="text-center space-y-8 pt-20 border-t border-white/5 max-w-5xl mx-auto">
+        <div className="inline-flex items-center gap-3 px-6 py-2 bg-[#2d5a4c]/10 rounded-full text-[#2d5a4c] text-xs font-serif-kr font-black tracking-widest border border-[#2d5a4c]/30">
+          <Sparkles size={14} /> Antique-Korea.com 고증 엔진 (Daily {dailyCount}/{DAILY_LIMIT})
+        </div>
+        <h2 className="text-4xl md:text-6xl font-serif-kr font-black text-white leading-tight tracking-tighter">
+          변함없는 정밀 고증실
+        </h2>
+        <p className="text-gray-500 font-serif-kr italic text-lg">"방 정리는 계속되지만, 당신의 보물에 대한 고증은 멈추지 않습니다."</p>
+      </section>
+
+      {/* Appraisal Tool */}
+      <ArtifactUploader onAnalyze={handleAnalyze} isLoading={isLoading} dailyCount={dailyCount} dailyLimit={DAILY_LIMIT} />
+    </div>
+  );
+
+  const renderMuseum = () => (
+    <div className="p-8 md:p-20 space-y-20 animate-fadeIn min-h-screen">
+      <div className="text-center space-y-6">
+        <h2 className="text-6xl font-serif-kr font-black text-white tracking-tighter">Digital Archive</h2>
+        <p className="text-gray-500 font-serif-kr italic text-xl">"Antique-Korea.com이 선별하고 기록한 고미술의 시간"</p>
+        <div className="h-1 w-24 bg-[#b8860b] mx-auto opacity-30" />
+      </div>
+      
+      {results.filter(r => r.isDonated).length === 0 ? (
+        <div className="text-center py-48 bg-white/5 rounded-[80px] border-2 border-dashed border-white/10">
+          <Library className="mx-auto text-gray-800 mb-8" size={80} />
+          <p className="text-gray-500 font-serif-kr text-2xl">아직 기록된 보물이 없습니다.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+          {results.filter(r => r.isDonated).map((item) => (
+            <div key={item.id} className="bg-[#0a0a0a] rounded-[56px] overflow-hidden border border-white/5 shadow-3xl group cursor-pointer hover:border-[#b8860b]/60 transition-all p-4" onClick={() => { setCurrentResult(item); setActiveView('result'); }}>
+              <div className="aspect-square overflow-hidden relative rounded-[42px]">
+                <img src={item.imageUrls[0]} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                <div className="absolute top-6 right-6 bg-black/80 backdrop-blur-md text-[#d4af37] text-[10px] px-4 py-2 rounded-full font-black border border-[#d4af37]/20">ARCHIVED</div>
+              </div>
+              <div className="p-8 space-y-4">
+                <div className="flex justify-between items-center text-[10px] font-black text-[#b8860b] uppercase tracking-[0.2em] font-serif-kr">
+                  <span>{item.category}</span>
+                  <span className="text-gray-600">{item.period}</span>
+                </div>
+                <h3 className="text-3xl font-serif-kr font-black text-white leading-tight">{item.title}</h3>
+                <p className="text-sm text-gray-500 font-serif-kr italic line-clamp-2 leading-relaxed">"{item.description}"</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const renderLibrary = () => (
+    <div className="p-8 md:p-20 space-y-24 animate-fadeIn max-w-5xl mx-auto pb-60">
+      <div className="text-center space-y-6">
+        <h2 className="text-5xl font-serif-kr font-black text-white">디지털 이주 센터</h2>
+        <p className="text-gray-500 font-serif-kr italic text-xl">"이곳의 이삿짐(기록)을 www.antique-korea.com으로 옮기기 위한 공간"</p>
+      </div>
+
+      {/* Migration Dashboard */}
+      <section className="bg-white/5 border border-[#b8860b]/30 p-12 md:p-16 rounded-[64px] shadow-3xl space-y-12">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="space-y-4 text-center md:text-left">
+            <div className="flex items-center gap-3 text-emerald-500 font-black text-xs font-serif-kr tracking-widest uppercase">
+              <CloudSync className="animate-spin-slow" /> Local Sync Active
+            </div>
+            <h3 className="text-4xl font-serif-kr font-black text-white">이삿짐 꾸리기 (Export)</h3>
+            <p className="text-gray-400 font-serif-kr text-lg leading-relaxed">
+              현재 브라우저에 저장된 <span className="text-[#b8860b] font-black">{results.length}개의 고증 기록</span>을 <br /> 
+              하나의 패키지 파일로 압축하여 다운로드합니다.
+            </p>
+          </div>
+          <button 
+            onClick={downloadArchive}
+            className="bg-[#b8860b] text-black px-12 py-6 rounded-3xl font-black font-serif-kr text-xl flex items-center gap-4 hover:scale-105 transition-all shadow-2xl"
+          >
+            패키지 다운로드 <Download size={24} />
+          </button>
+        </div>
+      </section>
+
+      {/* Naver Blog Card in Library */}
+      <section className="bg-[#1a1405] p-12 rounded-[56px] border border-[#b8860b]/20 flex flex-col md:flex-row items-center gap-8 shadow-xl relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#b8860b]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+        <div className="bg-[#b8860b] p-6 rounded-full text-black">
+          <Coffee size={40} />
+        </div>
+        <div className="flex-1 space-y-2 text-center md:text-left relative z-10">
+          <h4 className="text-2xl font-serif-kr font-black text-white">"잠시 쉬었다 가세요."</h4>
+          <p className="text-gray-400 font-serif-kr italic">네이버 블로그에서 고미술 이야기를 나누며 방 정리를 기다립니다.</p>
+        </div>
+        <a 
+          href="https://blog.naver.com/keumsukcho" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="px-10 py-4 bg-white/5 border-2 border-[#b8860b]/40 rounded-2xl text-[#b8860b] font-black font-serif-kr hover:bg-[#b8860b] hover:text-black transition-all flex items-center gap-3 relative z-10"
+        >
+          사랑방 방문 <ExternalLink size={18} />
+        </a>
+      </section>
+    </div>
+  );
+
+  const renderAbout = () => (
+    <div className="p-8 md:p-24 space-y-24 max-w-4xl mx-auto animate-fadeIn pb-60">
+      <div className="text-center space-y-10">
+        <div className="inline-flex bg-[#b8860b] p-12 rounded-[56px] text-black shadow-3xl">
+          <Heart size={64} fill="currentColor" />
+        </div>
+        <h2 className="text-6xl font-serif-kr font-black text-white tracking-tighter">
+          기록의 힘을 <br />
+          <span className="text-gold-gradient">믿어주셔서 감사합니다.</span>
+        </h2>
+      </div>
+
+      <div className="relative p-12 md:p-20 bg-white/5 border border-white/10 rounded-[80px] shadow-3xl">
+        <div className="absolute top-10 left-10 text-[#b8860b]/5"><Quote size={120} /></div>
+        <div className="space-y-12 text-gray-200 text-2xl font-serif-kr leading-[2.2] font-black italic relative z-10 text-center md:text-left">
+          <p>안녕하세요. <span className="text-[#b8860b]">Antique-Korea.com</span>의 THE HUMAN입니다.</p>
+          <p>방 정리가 완전히 끝날 때까지 다소 어수선할 수 있으나, 고증의 깊이와 아카이브의 진심은 변하지 않습니다.</p>
+          <p>블로그 쉼터(keumsukcho)에서 나누는 따스한 담소가 우리 모두에게 새로운 영감이 되기를 바랍니다.</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (activeView) {
+      case 'home': return renderHome();
+      case 'museum': return renderMuseum();
+      case 'library': return renderLibrary();
+      case 'about': return renderAbout();
+      case 'result': return currentResult ? <ResultDisplay result={currentResult} onReset={() => { setCurrentResult(null); setActiveView('home'); }} /> : renderHome();
+      default: return renderHome();
+    }
+  };
+
+  return (
+    <Layout activeView={activeView} setView={setActiveView}>
+      {!hasAgreed && <DisclaimerModal onAgree={() => { localStorage.setItem('user_has_agreed_disclaimer', 'true'); setHasAgreed(true); }} />}
+      {renderContent()}
+    </Layout>
+  );
+};
+
+export default App;
+
+
+
   }
 }
 </script>
