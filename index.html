@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script>
-      // 환경 변수 설정 (시스템 주입 API_KEY 사용)
+      // 브라우저 환경에서 process 객체 정의
       window.process = { env: { API_KEY: "" } };
     </script>
     <style>
@@ -17,8 +17,9 @@
             background-color: var(--museum-black); 
             color: #e5e5e5; 
             margin: 0; 
-            overflow-x: hidden; 
+            overflow: hidden;
         }
+        #root { height: 100vh; overflow-y: auto; }
         .font-serif-kr { font-family: 'Noto Serif KR', serif; }
         .text-gold-gradient {
             background: linear-gradient(90deg, #8b4513, #b8860b, #d4af37, #b8860b, #8b4513);
@@ -28,14 +29,6 @@
             animation: gold-shimmer 4s linear infinite;
         }
         @keyframes gold-shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
-        .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* 스크롤바 디자인 */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #b8860b; }
     </style>
     <script type="importmap">
 {
@@ -52,8 +45,18 @@
 </script>
 </head>
 <body>
-    <div id="root"></div>
-    <!-- 아래 스크립트가 index.tsx를 로드하여 React 앱을 시작합니다. -->
-    <script type="module" src="index.tsx"></script>
+    <div id="root">
+        <!-- 초기 로딩 화면: 먹통 현상을 방지하고 로딩 중임을 알림 -->
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #050505; color: #b8860b; font-family: 'Noto Serif KR', serif; text-align: center; gap: 20px;">
+            <div style="font-size: 24px; font-weight: 900; letter-spacing: -0.05em;">Antique-Korea.com</div>
+            <div style="font-size: 14px; opacity: 0.8;">디지털 고증 아카이브를 불러오고 있습니다...</div>
+            <div style="width: 40px; height: 40px; border: 3px solid #b8860b22; border-top-color: #b8860b; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        </div>
+    </div>
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+    <!-- index.tsx 파일이 반드시 이 위치(root)에 존재해야 합니다 -->
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>
