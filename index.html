@@ -6,10 +6,6 @@
     <title>Antique-Korea.com | 고미술 정밀 고증 아카이브</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script>
-      // 브라우저 환경 설정
-      window.process = { env: { API_KEY: "" } };
-    </script>
     <style>
         :root { --royal-gold: #b8860b; --museum-black: #050505; }
         body { 
@@ -54,9 +50,6 @@
             <div style="width: 40px; height: 40px; border: 3px solid #b8860b22; border-top-color: #b8860b; border-radius: 50%; animation: spin 1s linear infinite;"></div>
         </div>
     </div>
-    <!-- 
-      주의: index.tsx는 시스템에 의해 자동으로 임포트됩니다. 
-      수동으로 <script src="index.tsx">를 추가하면 CORS 및 MIME 타입 에러가 발생할 수 있습니다.
-    -->
+    <!-- index.tsx는 플랫폼에 의해 자동 로드되므로 수동 script 태그를 추가하지 마세요. -->
 </body>
 </html>
