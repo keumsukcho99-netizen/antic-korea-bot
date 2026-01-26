@@ -1,126 +1,59 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Antique -Korea.com - 시간의 적체미</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-
-  <style>
-    body{
-      background:#f6f4fa; color:#222;
-      font-family:'Noto Sans KR',sans-serif; 
-      margin:0;
-    }
-    .container{
-      max-width:720px;
-      margin:0 auto;
-      padding:64px 20px;
-    }
-    h1{ font-size:32px; margin:0 0 22px; line-height:1.25; }
-    p{ font-size:18px; line-height:1.75; margin:0 0 18px; }
-    .highlight{ color:#2f5d50; font-weight:700; }
-    .card{
-      background:#fff;
-      border-radius:14px;
-      padding:22px;
-      box-shadow:0 8px 20px rgba(0,0,0,.08);
-      margin-top:26px;
-    }
-    .btn{
-      display:inline-block;
-      margin-top:14px;
-      background:#2f5d50; color:#fff;
-      text-decoration:none;
-      padding:12px 18px;
-      border-radius:10px;
-    }
-    .btn:hover{ background:#3a7264; }
-    .small{ font-size:14px; color:#666; margin-top:18px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antique-Korea.com | 고미술 정밀 고증 아카이브</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+      // 환경 변수 설정 (시스템 주입 API_KEY 사용)
+      window.process = { env: { API_KEY: "" } };
+    </script>
+    <style>
+        :root { --royal-gold: #b8860b; --museum-black: #050505; }
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: var(--museum-black); 
+            color: #e5e5e5; 
+            margin: 0; 
+            overflow-x: hidden; 
+        }
+        .font-serif-kr { font-family: 'Noto Serif KR', serif; }
+        .text-gold-gradient {
+            background: linear-gradient(90deg, #8b4513, #b8860b, #d4af37, #b8860b, #8b4513);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            animation: gold-shimmer 4s linear infinite;
+        }
+        @keyframes gold-shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 스크롤바 디자인 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8860b; }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.460.0?external=react",
+    "@google/genai": "https://esm.sh/@google/genai@0.21.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
 </head>
-  <!--
-[ARCHIVE NOTE]
-Opened: 2026-01-23
-
-오늘, 문이 열렸다.
-
-아직 방은 비어 있다.
-가구도 없고, 설명도 없다.
-
-하지만
-시간은 사라지지 않는다는 말이
-드디어 주소를 가졌다.
-
-급하지 않게,
-살아가면서
-이 집을 만들어가기로 한다.
--->
-
-
 <body>
-  <div class="container">
-    <h1>시간은 사라지지 않습니다.<br>다만,<br> 물건 속에 머무를 뿐입니다.</h1>
-
-    <p>
-      <span class="highlight">Antique -Korea.com</span>은
-     소유와 가치가 아닌 <br>시간의 축적이 만들어낸 <br> 옛것의 아름다움을 함께 나누는 공간입니다 <br>
-    </p>
-    <p>
-     오래된 것들의 결을 따라
-     그 물건이 거쳐온 숨결과 흔적을
-     정성껏 기록하고 보존해 가겠습니다.
-    </p>
-
-    <div class="card">
-      <p><b>이 페이지는 antique-korea.com의‘문’입니다.</b><br>
-       내부는 천천히 꾸며가도록 하겠습니다.</p>
-      <style>
-  .room {
-    margin-top: 3rem;
-    padding: 1.5rem;
-    background: #ffffff;
-    border-radius: 12px;
-    color: #333;
-  }
-
-  .room h2 {
-    margin-bottom: 0.8rem;
-    font-size: 1.1rem;
-    color: #2f5d50;
-  }
-</style>
-
-      <section class="room">
-  <h2>방 01. 기록의 방</h2>
-<p class="small">이 문은 2026년 1월 23일에 열렸습니다.</p>
-
-  <p>
-  단순히 결과만을 쫒기보다는<br>
-  지나온 시간의 결을 회상하고 기록해 가고자 합니다.
-  </p>
-<h3>방 02. 사유의 방</h3>
-<h4>방 03. 수집의 방</h4>
-<h5>방 04. 사람의 방</h5>
-
-  <p>말없이도 전해지는 온기
-
-     인간 냄새 자욱한 소통의 공간입니다
-  </p>
-        <p class="small">—2026년 1월 25일 방을 하나 만들었습니다.</p>
-
-</section>
-
-
-      <a class="btn" href="https://blog.naver.com/keumsukcho" target="_blank" rel="noopener">
-        블로그로 가셔서 잠시 쉬어 가십시오.
-      </a>
-
-      <p class="small">
-        © Antique-Korea.com — Quiet Trust
-      </p>
-    </div>
-  </div>
+    <div id="root"></div>
+    <!-- 아래 스크립트가 index.tsx를 로드하여 React 앱을 시작합니다. -->
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>
