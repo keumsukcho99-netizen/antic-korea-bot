@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script>
-      // 브라우저 환경에서 process 객체 정의
       window.process = { env: { API_KEY: "" } };
     </script>
     <style>
@@ -29,13 +28,14 @@
             animation: gold-shimmer 4s linear infinite;
         }
         @keyframes gold-shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
     <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@19.0.0",
-    "react-dom": "https://esm.sh/react-dom@19.0.0",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
     "lucide-react": "https://esm.sh/lucide-react@0.460.0?external=react",
     "@google/genai": "https://esm.sh/@google/genai@0.21.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
@@ -46,17 +46,13 @@
 </head>
 <body>
     <div id="root">
-        <!-- 초기 로딩 화면: 먹통 현상을 방지하고 로딩 중임을 알림 -->
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #050505; color: #b8860b; font-family: 'Noto Serif KR', serif; text-align: center; gap: 20px;">
             <div style="font-size: 24px; font-weight: 900; letter-spacing: -0.05em;">Antique-Korea.com</div>
             <div style="font-size: 14px; opacity: 0.8;">디지털 고증 아카이브를 불러오고 있습니다...</div>
             <div style="width: 40px; height: 40px; border: 3px solid #b8860b22; border-top-color: #b8860b; border-radius: 50%; animation: spin 1s linear infinite;"></div>
         </div>
     </div>
-    <style>
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
-    <!-- index.tsx 파일이 반드시 이 위치(root)에 존재해야 합니다 -->
-    <script type="module" src="./index.tsx"></script>
+    <!-- 상대 경로 기호를 제거하여 브라우저의 오작동을 방지합니다 -->
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>
