@@ -2,18 +2,22 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { AppraisalResult, AppraisalConfig } from "../types";
 
 export async function analyzeArtifact(imageBases: string[], config: AppraisalConfig): Promise<AppraisalResult> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // process.env.API_KEY는 플랫폼에서 자동으로 주입됩니다.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
   const model = 'gemini-3-pro-preview';
 
   const imageParts = imageBases.map(base64 => ({
-    inlineData: { mimeType: "image/jpeg", data: base64.split(',')[1] }
+    inlineData: { 
+      mimeType: "image/jpeg", 
+      data: base64.includes(',') ? base64.split(',')[1] : base64 
+    }
   }));
 
   const response = await ai.models.generateContent({
     model,
     contents: {
       parts: [
-        { text: `이 유물을 분석하십시오. 카테고리: ${config.category}. 작가와 시대를 정밀 고증하고 JSON으로 출력하십시오.` },
+        { text: `이 유물을 분석하십시오. 카테고리: ${config.category}. 작가와 시대를 정밀 고증하고 학술적 근거를 바탕으로 JSON으로 출력하십시오.` },
         ...imageParts
       ]
     },
@@ -31,11 +35,12 @@ export async function analyzeArtifact(imageBases: string[], config: AppraisalCon
           coreAnalysis: {
             type: Type.OBJECT,
             properties: {
-              sealsAndSignatures: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } } },
-              historicalValue: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } } },
-              academicVerification: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } } },
-              materialAndStorage: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } } }
-            }
+              sealsAndSignatures: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } }, required: ["content", "score"] },
+              historicalValue: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } }, required: ["content", "score"] },
+              academicVerification: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } }, required: ["content", "score"] },
+              materialAndStorage: { type: Type.OBJECT, properties: { content: { type: Type.STRING }, score: { type: Type.NUMBER } }, required: ["content", "score"] }
+            },
+            required: ["sealsAndSignatures", "historicalValue", "academicVerification", "materialAndStorage"]
           },
           analysis: {
             type: Type.OBJECT,
@@ -43,7 +48,8 @@ export async function analyzeArtifact(imageBases: string[], config: AppraisalCon
               artifactDetails: { type: Type.STRING },
               historicalSignificance: { type: Type.STRING },
               conditionReport: { type: Type.STRING }
-            }
+            },
+            required: ["artifactDetails", "historicalSignificance", "conditionReport"]
           },
           estimatedValue: {
             type: Type.OBJECT,
@@ -52,14 +58,18 @@ export async function analyzeArtifact(imageBases: string[], config: AppraisalCon
               max: { type: Type.NUMBER },
               currency: { type: Type.STRING },
               note: { type: Type.STRING }
-            }
+            },
+            required: ["min", "max", "currency", "note"]
           }
-        }
+        },
+        required: ["title", "category", "period", "description", "confidenceScore", "coreAnalysis", "analysis", "estimatedValue"]
       }
     }
   });
 
-  const data = JSON.parse(response.text || '{}');
+  const text = response.text || '{}';
+  const data = JSON.parse(text);
+  
   return {
     id: crypto.randomUUID(),
     timestamp: Date.now(),
