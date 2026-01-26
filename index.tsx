@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 
-console.log("Antique-Korea App initializing...");
+// 로딩 확인을 위한 로그
+console.log("Antique-Korea App initializing from index.tsx...");
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  console.error("Root element not found in index.html");
+  console.error("Critical Error: Root element '#root' not found in index.html");
 } else {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
@@ -14,4 +15,5 @@ if (!rootElement) {
       <App />
     </React.StrictMode>
   );
+  console.log("React app mounted successfully.");
 }
