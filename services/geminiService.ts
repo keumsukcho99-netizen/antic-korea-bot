@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { AppraisalResult, AppraisalConfig } from "../types.ts";
+import { AppraisalResult, AppraisalConfig } from "../types";
 
 export async function analyzeArtifact(imageBases: string[], config: AppraisalConfig): Promise<AppraisalResult> {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
