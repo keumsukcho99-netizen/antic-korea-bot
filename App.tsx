@@ -11,6 +11,7 @@ const App: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   
+  // 사이트 정보 관리 (로컬 스토리지 저장)
   const [siteInfo, setSiteInfo] = useState({
     title: localStorage.getItem('site_title') || "어르신의 고미술 연구소",
     slogan: localStorage.getItem('site_slogan') || "전통의 가치를 디지털의 지혜로 잇습니다.",
@@ -57,6 +58,7 @@ const App: React.FC = () => {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto px-4 py-8 min-h-screen">
+        {/* 네비게이션 탭 */}
         <div className="flex justify-center mb-12 relative z-50">
           <div className="bg-slate-900 p-1.5 rounded-2xl flex gap-1 shadow-2xl border border-white/10">
             <button 
@@ -79,7 +81,7 @@ const App: React.FC = () => {
             <header className="text-center mb-20 space-y-6">
               <div className="inline-block">
                 <div className="flex flex-col items-center justify-center gap-4 mb-4">
-                  <div className="bg-slate-900 px-4 py-1 rounded-full">
+                  <div className="bg-slate-900 px-4 py-1 rounded-full border border-amber-500/30">
                     <span className="text-amber-500 font-mono text-[10px] tracking-widest font-black uppercase">{siteInfo.owner} 수석 큐레이터</span>
                   </div>
                 </div>
@@ -89,9 +91,6 @@ const App: React.FC = () => {
                 <p className="text-slate-500 text-xl font-medium serif-kr max-w-2xl mx-auto leading-relaxed italic">
                   "{siteInfo.slogan}"
                 </p>
-                <div className="mt-8 text-[11px] text-amber-700 font-mono font-bold tracking-widest">
-                   CONTACT: {siteInfo.phone}
-                </div>
               </div>
             </header>
 
@@ -124,6 +123,11 @@ const App: React.FC = () => {
           </div>
         )}
       </div>
+      
+      <footer className="mt-32 py-16 border-t border-slate-200 bg-white/50 text-center">
+        <p className="serif-kr text-slate-400 font-bold italic">ⓒ {new Date().getFullYear()} {siteInfo.owner} | {siteInfo.title}</p>
+        <p className="text-[10px] text-slate-300 font-mono tracking-widest mt-2 uppercase">Verified Connection: {siteInfo.domain}</p>
+      </footer>
     </Layout>
   );
 };
