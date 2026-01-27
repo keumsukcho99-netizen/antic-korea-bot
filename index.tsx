@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
+import App from './App';
 
 console.log("%c[Antique-Korea] 시스템 연결 성공", "color: #b8860b; font-weight: bold;");
 
