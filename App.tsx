@@ -11,7 +11,6 @@ const App: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   
-  // 사이트 정보 관리 (로컬 스토리지 저장)
   const [siteInfo, setSiteInfo] = useState({
     title: localStorage.getItem('site_title') || "어르신의 고미술 연구소",
     slogan: localStorage.getItem('site_slogan') || "전통의 가치를 디지털의 지혜로 잇습니다.",
@@ -34,7 +33,7 @@ const App: React.FC = () => {
     setCurrentImages([]);
   }, []);
 
-  const handleAppraisal = async (data: { images: string[], category: string, modules: string[], notes: string }) => {
+  const handleAppraisal = async (data: { images: string[], notes: string }) => {
     if (isAppraising) return;
     setIsAppraising(true);
     setCurrentImages(data.images);
@@ -43,13 +42,10 @@ const App: React.FC = () => {
         const parts = img.split(',');
         return { data: parts[1], mimeType: parts[0].split(';')[0].split(':')[1] };
       });
-      const response = await getAppraisal(data.notes, imagePayload, {
-        category: data.category,
-        modules: data.modules
-      });
+      const response = await getAppraisal(data.notes, imagePayload);
       setResult(response);
     } catch (error) {
-      alert("분석 장치가 과열되었습니다. 잠시 열을 식힌 후 다시 시도해주십시오.");
+      alert("분석 장치가 과열되었습니다. 관리 집무실에서 API_KEY 설정을 확인해주세요.");
     } finally {
       setIsAppraising(false);
     }
@@ -58,7 +54,6 @@ const App: React.FC = () => {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto px-4 py-8 min-h-screen">
-        {/* 네비게이션 탭 */}
         <div className="flex justify-center mb-12 relative z-50">
           <div className="bg-slate-900 p-1.5 rounded-2xl flex gap-1 shadow-2xl border border-white/10">
             <button 
@@ -95,7 +90,7 @@ const App: React.FC = () => {
             </header>
 
             {!result ? (
-              <ArtifactUploader onAppraise={handleAppraisal} isAppraising={isAppraising} />
+              <ArtifactUploader onAppraise={(data) => handleAppraisal({images: data.images, notes: data.notes})} isAppraising={isAppraising} />
             ) : (
               <div className="space-y-12">
                 <ResultDisplay result={result} images={currentImages} />
@@ -123,11 +118,6 @@ const App: React.FC = () => {
           </div>
         )}
       </div>
-      
-      <footer className="mt-32 py-16 border-t border-slate-200 bg-white/50 text-center">
-        <p className="serif-kr text-slate-400 font-bold italic">ⓒ {new Date().getFullYear()} {siteInfo.owner} | {siteInfo.title}</p>
-        <p className="text-[10px] text-slate-300 font-mono tracking-widest mt-2 uppercase">Verified Connection: {siteInfo.domain}</p>
-      </footer>
     </Layout>
   );
 };
