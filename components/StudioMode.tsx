@@ -19,8 +19,7 @@ export const StudioMode: React.FC<Props> = ({ siteInfo, setSiteInfo }) => {
   
   const getApiKeyStatus = () => {
     try {
-      // Vite define 및 process.env 모두 체크
-      const key = (process.env.API_KEY) || "";
+      const key = process.env.API_KEY || "";
       if (!key) return { status: 'missing', text: '열쇠가 없습니다 (등록 필요)' };
       return { status: 'active', text: `연결됨 (${key.substring(0, 4)}***)` };
     } catch (e) {
@@ -41,7 +40,7 @@ export const StudioMode: React.FC<Props> = ({ siteInfo, setSiteInfo }) => {
               <span className="text-amber-500 font-mono text-[10px] tracking-[0.3em] font-black uppercase mb-4 block">Administrator Console</span>
               <h2 className="text-4xl md:text-5xl font-black serif-kr mb-4">수석 큐레이터 집무실</h2>
               <div className="flex flex-wrap items-center gap-4 justify-center md:justify-start">
-                <p className="text-slate-400 font-medium serif-kr">어르신의 고미술 연구소를 관리하는 중앙 통제소입니다.</p>
+                <p className="text-slate-400 font-medium serif-kr">연구소 대문과 시스템을 관리하는 중앙 통제소입니다.</p>
                 <div className={`px-4 py-1.5 rounded-full text-[10px] font-black border ${keyInfo.status === 'active' ? 'bg-green-500/10 border-green-500 text-green-500' : 'bg-rose-500/10 border-rose-500 text-rose-500 animate-pulse'}`}>
                   분석기 열쇠: {keyInfo.text}
                 </div>
@@ -59,34 +58,31 @@ export const StudioMode: React.FC<Props> = ({ siteInfo, setSiteInfo }) => {
         </div>
 
         {showGithubGuide && (
-          <div className="bg-white rounded-[3rem] p-10 border-4 border-amber-500 shadow-2xl animate-in slide-in-from-top-10 duration-700">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-black text-2xl font-black">🔑</div>
-              <div>
-                <h3 className="text-2xl font-black text-slate-900 serif-kr">분석 장치를 깨우는 열쇠(API_KEY) 등록법</h3>
-                <p className="text-slate-500 font-medium text-sm">"열쇠가 없으면 인공지능 큐레이터가 유물을 보지 못합니다."</p>
+          <div className="grid md:grid-cols-2 gap-6 animate-in slide-in-from-top-10 duration-700">
+            <div className="bg-white rounded-[3rem] p-10 border-4 border-amber-500 shadow-2xl">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-black text-2xl font-black">🔑</div>
+                <h3 className="text-2xl font-black text-slate-900 serif-kr">API_KEY 등록법</h3>
               </div>
+              <p className="text-slate-600 text-sm leading-relaxed mb-6">
+                Vercel 설정(Settings) -> Environment Variables에서 <strong>API_KEY</strong>라는 이름으로 열쇠 번호를 등록하세요.
+              </p>
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-amber-900 font-bold underline">구글에서 열쇠 번호 받기 →</a>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-amber-50 p-8 rounded-2xl border border-amber-100">
-                <p className="font-black text-amber-900 text-sm mb-3">1. 열쇠 찾기</p>
-                <p className="text-slate-600 text-xs leading-relaxed">
-                  <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-blue-600 underline font-bold">구글 AI 스튜디오</a>에서 <strong>AIza...</strong>로 시작하는 코드를 복사하세요.
-                </p>
+            <div className="bg-white rounded-[3rem] p-10 border-4 border-red-500 shadow-2xl">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white text-2xl font-black">🌐</div>
+                <h3 className="text-2xl font-black text-slate-900 serif-kr">도메인 오류 해결법</h3>
               </div>
-              <div className="bg-amber-50 p-8 rounded-2xl border border-amber-100">
-                <p className="font-black text-amber-900 text-sm mb-3">2. Vercel 등록</p>
-                <p className="text-slate-600 text-xs leading-relaxed">
-                  Vercel 설정에서 <strong>Add Variable</strong>을 누르고 이름엔 <strong>API_KEY</strong>, 값에는 복사한 코드를 넣으세요.
-                </p>
-              </div>
-              <div className="bg-amber-50 p-8 rounded-2xl border border-amber-100">
-                <p className="font-black text-amber-900 text-sm mb-3">3. 문 다시 열기</p>
-                <p className="text-slate-600 text-xs leading-relaxed">
-                  저장 후, GitHub에서 파일을 수정하거나 Vercel에서 <strong>Redeploy</strong>를 누르면 1분 뒤 작동합니다.
-                </p>
-              </div>
+              <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                이메일에 뜬 <strong>'잘못된 구성'</strong>은 카페24 설정이 누락되었다는 뜻입니다.
+              </p>
+              <ul className="text-xs text-red-600 space-y-2 font-bold">
+                <li>1. 카페24 접속 -> 도메인 관리</li>
+                <li>2. DNS 관리 -> 'A 레코드' 선택</li>
+                <li>3. IP 주소 칸에 <strong>76.76.21.21</strong> 입력 후 저장</li>
+              </ul>
             </div>
           </div>
         )}
