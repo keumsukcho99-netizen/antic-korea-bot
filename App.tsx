@@ -12,19 +12,19 @@ const App: React.FC = () => {
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   
   const [siteInfo, setSiteInfo] = useState({
-    title: localStorage.getItem('site_title') || "시간의 적체미를 잇는 연구소",
-    slogan: localStorage.getItem('site_slogan') || "전통의 가치를 디지털의 지혜로 잇습니다.",
-    owner: localStorage.getItem('site_owner') || "고산 큐레이터",
-    domain: localStorage.getItem('site_domain') || "antique-korea.com",
-    phone: localStorage.getItem('site_phone') || "010-0000-0000"
+    title: localStorage.getItem('antique_site_title') || "시간의 적체미를 잇는 연구소",
+    slogan: localStorage.getItem('antique_site_slogan') || "전통의 가치를 디지털의 지혜로 잇습니다.",
+    owner: localStorage.getItem('antique_site_owner') || "고산 큐레이터",
+    domain: localStorage.getItem('antique_site_domain') || "antique-korea.com",
+    phone: localStorage.getItem('antique_site_phone') || "010-0000-0000"
   });
 
   useEffect(() => {
-    localStorage.setItem('site_title', siteInfo.title);
-    localStorage.setItem('site_slogan', siteInfo.slogan);
-    localStorage.setItem('site_owner', siteInfo.owner);
-    localStorage.setItem('site_domain', siteInfo.domain);
-    localStorage.setItem('site_phone', siteInfo.phone);
+    localStorage.setItem('antique_site_title', siteInfo.title);
+    localStorage.setItem('antique_site_slogan', siteInfo.slogan);
+    localStorage.setItem('antique_site_owner', siteInfo.owner);
+    localStorage.setItem('antique_site_domain', siteInfo.domain);
+    localStorage.setItem('antique_site_phone', siteInfo.phone);
   }, [siteInfo]);
 
   const handleAppraisal = async (data: { images: string[], notes: string }) => {
@@ -57,7 +57,7 @@ const App: React.FC = () => {
 
           <div className="relative z-10 space-y-12 max-w-4xl mx-auto animate-in fade-in zoom-in duration-1000">
             <div className="inline-block px-4 py-1 border border-amber-900 text-amber-900 text-[10px] font-black tracking-widest uppercase rounded-full mb-4">
-              AI Heritage Archive Project
+              Antique Korea - AI Heritage Archive
             </div>
             
             <h1 className="text-6xl md:text-8xl font-black serif-kr text-slate-900 tracking-tighter leading-tight">
