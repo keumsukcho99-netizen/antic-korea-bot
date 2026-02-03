@@ -1,4 +1,5 @@
 {
+  "name": "antique-korea",
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist"
